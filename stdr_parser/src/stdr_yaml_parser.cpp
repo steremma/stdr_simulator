@@ -53,7 +53,6 @@ namespace stdr_parser
     YAML::Node doc;
     parser.GetNextDocument(doc);
 #endif
-
     base_node->file_origin = file_name;
 #ifndef HAVE_NEW_YAMLCPP
     base_node->file_row = doc.GetMark().line;

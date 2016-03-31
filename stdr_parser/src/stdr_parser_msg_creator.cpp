@@ -929,7 +929,19 @@ namespace stdr_parser
       specs = specs->elements[0];
     }
     std::vector<int> indexes;
-    
+
+    //!< Search for batteryCapacity
+	indexes = specs->getTag("batteryCapacity");
+	if(indexes.size() == 0)
+    {
+      msg.batteryCapacity = 20000;
+    }
+    else
+    {
+      msg.batteryCapacity = stdr_parser::MessageCreator::stringToType<int>(
+		  specs->elements[indexes[0]]->elements[0]->value.c_str());
+    }
+
     //!< Search for pose
     indexes = specs->getTag("initial_pose");
     if(indexes.size() != 0)

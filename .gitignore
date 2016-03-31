@@ -15,7 +15,8 @@ bags/
 *Goal.msg
 *Result.msg
 
-
+# Temp editor files
+*~
 
 # Compiled source #
 ###################

@@ -128,10 +128,18 @@ namespace stdr_robot {
     @return void
     **/
     void publishTransforms(const ros::TimerEvent&);
-   
+
+    /**
+    @brief Return the battery level
+    @return The battery level
+    **/
+    int getBatteryLevel(void);
    
    private:
-  
+  	
+	//!< Robots battery level
+    int batteryLevel;
+
     //!< ROS subscriber for map
     ros::Subscriber _mapSubscriber;
     

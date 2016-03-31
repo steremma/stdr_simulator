@@ -22,6 +22,7 @@
 #include <stdr_robot/stdr_robot.h>
 #include <nodelet/NodeletUnload.h>
 #include <pluginlib/class_list_macros.h>
+#define DEFAULT_CAPACITY 20000
 
 PLUGINLIB_EXPORT_CLASS(stdr_robot::Robot, nodelet::Nodelet)
 
@@ -34,6 +35,15 @@ namespace stdr_robot
   Robot::Robot(void)
   {
 
+  }
+
+  /**
+  @brief Return the battery level
+  @return The battery level
+  **/
+  int Robot::getBatteryLevel()
+  {
+	return batteryLevel;
   }
 
   /**
@@ -83,6 +93,9 @@ namespace stdr_robot
 
     NODELET_INFO("Loaded new robot, %s", getName().c_str());
     ros::NodeHandle n = getMTNodeHandle();
+	
+	batteryLevel = result->description.batteryCapacity;
+	ROS_ERROR("Battery level is now: %d",batteryLevel);
 
     _currentPose = result->description.initialPose;
 
