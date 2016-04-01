@@ -24,12 +24,8 @@
   </robot>
 
   <robot_specifications>
-    <allowed>initial_pose,footprint,laser,sonar,rfid_reader,kinematic,batteryCapacity</allowed>
+    <allowed>initial_pose,footprint,laser,sonar,rfid_reader,kinematic,battery</allowed>
   </robot_specifications>
-  
-  <batteryCapacity>
-     <default>20000</default>
-  </batteryCapacity>
   
   <initial_pose>
     <allowed>x,y,theta</allowed>
@@ -56,6 +52,20 @@
     <allowed>x,y</allowed>
     <required>x,y</required>
   </point>
+
+  <battery>
+    <allowed>filename,battery_specifications</allowed>
+    <required>battery_specifications</required>
+  </battery>
+
+  <battery_specifications>
+    <allowed>initial_capacity,frequency,frame_id,pose</allowed>
+    <required></required>
+  </battery_specifications>
+
+  <initial_capacity>
+    <default>15000</default>
+  </initial_capacity>
 
   <laser>
     <allowed>filename,laser_specifications</allowed>

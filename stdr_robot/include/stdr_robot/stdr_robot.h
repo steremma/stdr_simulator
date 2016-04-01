@@ -28,6 +28,7 @@
 #include <stdr_msgs/RobotMsg.h>
 #include <stdr_msgs/MoveRobot.h>
 #include <stdr_robot/sensors/sensor_base.h>
+#include <stdr_robot/sensors/battery.h>
 #include <stdr_robot/sensors/laser.h>
 #include <stdr_robot/sensors/sonar.h>
 #include <stdr_robot/sensors/rfid_reader.h>

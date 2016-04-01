@@ -12,6 +12,7 @@ find_package(catkin REQUIRED COMPONENTS
 add_message_files(
     FILES
     Noise.msg
+	BatterySensorMsg.msg
     LaserSensorMsg.msg
     SonarSensorMsg.msg
     KinematicMsg.msg

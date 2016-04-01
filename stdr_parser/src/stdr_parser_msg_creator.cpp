@@ -220,7 +220,79 @@ namespace stdr_parser
     }
     return msg;
   }
-  
+
+  /**
+  @brief Creates a message from a parsed file - template specialization for stdr_msgs::BatterySensorMsg
+  @param n [Node*] The root node
+  @return The message
+  **/
+  template <> 
+  stdr_msgs::BatterySensorMsg MessageCreator::createMessage(
+    Node *n,unsigned int id)
+  {
+    stdr_msgs::BatterySensorMsg msg;
+    Node* specs = n->elements[0];
+    if(specs->tag == "battery")
+    {
+      specs = specs->elements[0];
+    }
+
+    std::vector<int> indexes;
+    //!< Search for radius
+    indexes = specs->getTag("initial_capacity");
+    if(indexes.size() == 0)
+    {
+      msg.initial_capacity = stdr_parser::MessageCreator::stringToType<int>(
+        Specs::specs["initial_capacity"].default_value.c_str());
+    }
+    else
+    {
+      msg.initial_capacity = stdr_parser::MessageCreator::stringToType<int>(
+        specs->elements[indexes[0]]->elements[0]->value);
+    }
+
+	//!< Search for frequency
+    indexes = specs->getTag("frequency");
+    if(indexes.size() == 0)
+    {
+      msg.frequency = stdr_parser::MessageCreator::stringToType<float>(
+        Specs::specs["frequency"].default_value.c_str());
+    }
+    else
+    {
+      msg.frequency = stdr_parser::MessageCreator::stringToType<float>(
+        specs->elements[indexes[0]]->elements[0]->value.c_str());
+    }
+    
+    //!< Set up frame id based on id input
+    indexes = specs->getTag("frame_id");
+    if(indexes.size() == 0)
+    {
+      msg.frame_id = std::string("battery_") + SSTR(id);
+    }
+    else
+    {
+      msg.frame_id = specs->elements[indexes[0]]->elements[0]->value;
+    }
+    
+    //!< Search for pose
+    indexes = specs->getTag("pose");
+    if(indexes.size() != 0)
+    {
+      msg.pose = 
+        createMessage<geometry_msgs::Pose2D>(specs->elements[indexes[0]],0);
+    }
+    else
+    {
+      msg.pose.x =  stdr_parser::MessageCreator::stringToType<float>(
+        Specs::specs["x"].default_value.c_str());
+      msg.pose.y = stdr_parser::MessageCreator::stringToType<float>(
+        Specs::specs["y"].default_value.c_str());
+      msg.pose.theta = stdr_parser::MessageCreator::stringToType<float>(
+        Specs::specs["theta"].default_value.c_str());
+    }    
+    return msg;
+  }  
   /**
   @brief Creates a message from a parsed file - template specialization for stdr_msgs::LaserSensorMsg
   @param n [Node*] The root node
@@ -930,18 +1002,6 @@ namespace stdr_parser
     }
     std::vector<int> indexes;
 
-    //!< Search for batteryCapacity
-	indexes = specs->getTag("batteryCapacity");
-	if(indexes.size() == 0)
-    {
-      msg.batteryCapacity = 20000;
-    }
-    else
-    {
-      msg.batteryCapacity = stdr_parser::MessageCreator::stringToType<int>(
-		  specs->elements[indexes[0]]->elements[0]->value.c_str());
-    }
-
     //!< Search for pose
     indexes = specs->getTag("initial_pose");
     if(indexes.size() != 0)
@@ -971,7 +1031,19 @@ namespace stdr_parser
       msg.footprint.radius = stdr_parser::MessageCreator::stringToType<float>(
         Specs::specs["radius"].default_value.c_str());
     }
-    
+
+    //!< Search for battery sensors
+    indexes = specs->getTag("battery");
+    if(indexes.size() != 0)
+    {
+      for(unsigned int i = 0 ; i < indexes.size() ; i++)
+      {
+        msg.batterySensors.push_back(
+          createMessage<stdr_msgs::BatterySensorMsg>(
+            specs->elements[indexes[i]] , i));
+      }
+    } 
+   
     //!< Search for laser sensors
     indexes = specs->getTag("laser");
     if(indexes.size() != 0)

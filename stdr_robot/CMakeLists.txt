@@ -42,6 +42,10 @@ catkin_package(
 add_library(stdr_sensor_base src/sensors/sensor_base.cpp)
 target_link_libraries(stdr_sensor_base ${catkin_LIBRARIES})
 
+add_library(stdr_battery src/sensors/battery.cpp)
+add_dependencies(stdr_battery stdr_msgs_gencpp) # wait for stdr_msgs to be build
+target_link_libraries(stdr_battery ${catkin_LIBRARIES} stdr_sensor_base)
+
 add_library(stdr_sonar src/sensors/sonar.cpp)
 add_dependencies(stdr_sonar stdr_msgs_gencpp) # wait for stdr_msgs to be build
 target_link_libraries(stdr_sonar ${catkin_LIBRARIES} stdr_sensor_base)
@@ -80,6 +84,7 @@ add_library(stdr_robot_nodelet src/stdr_robot.cpp)
 add_dependencies(stdr_robot_nodelet stdr_msgs_gencpp) # wait for stdr_msgs to be build
 target_link_libraries(stdr_robot_nodelet ${catkin_LIBRARIES}
     stdr_laser
+	stdr_battery
     stdr_sonar
     stdr_rfid_reader
     stdr_co2_sensor
@@ -115,6 +120,7 @@ install(FILES robot_plugins.xml
 install(TARGETS
     stdr_sensor_base
     stdr_sonar
+	stdr_battery
     stdr_rfid_reader
     stdr_co2_sensor
     stdr_microphone_sensor
