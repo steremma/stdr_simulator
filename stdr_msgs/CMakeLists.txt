@@ -13,6 +13,7 @@ add_message_files(
     FILES
     Noise.msg
 	BatterySensorMsg.msg
+	BatterySensorMeasurement.msg
     LaserSensorMsg.msg
     SonarSensorMsg.msg
     KinematicMsg.msg

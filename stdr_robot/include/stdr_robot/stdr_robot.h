@@ -88,7 +88,14 @@ namespace stdr_robot {
     @return void
     **/
     void mapCallback(const nav_msgs::OccupancyGridConstPtr& msg);
-    
+
+	/**
+	@brief Callback for getting the battery current level
+	@param level [int] The current battery level
+	@return void
+	**/
+	void batteryCallback(const stdr_msgs::BatterySensorMeasurement& msg);
+  
     /**
     @brief The callback of the re-place robot service
     @param req [stdr_msgs::MoveRobot::Request&] The service request
@@ -130,16 +137,14 @@ namespace stdr_robot {
     **/
     void publishTransforms(const ros::TimerEvent&);
 
-    /**
-    @brief Return the battery level
-    @return The battery level
-    **/
-    int getBatteryLevel(void);
    
    private:
-  	
-	//!< Robots battery level
-    int batteryLevel;
+
+	//!< The current battery level
+	int _batteryLevel;
+
+    //!< ROS subscriber battery
+    ros::Subscriber _batterySubscriber;
 
     //!< ROS subscriber for map
     ros::Subscriber _mapSubscriber;

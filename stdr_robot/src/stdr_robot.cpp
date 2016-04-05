@@ -22,6 +22,7 @@
 #include <stdr_robot/stdr_robot.h>
 #include <nodelet/NodeletUnload.h>
 #include <pluginlib/class_list_macros.h>
+#define ENERGY_NEEDED_PER_METER 10
 
 PLUGINLIB_EXPORT_CLASS(stdr_robot::Robot, nodelet::Nodelet)
 
@@ -57,6 +58,9 @@ namespace stdr_robot
       boost::bind(&Robot::initializeRobot, this, _1, _2));
 
     _mapSubscriber = n.subscribe("map", 1, &Robot::mapCallback, this);
+
+	_batterySubscriber = n.subscribe("battery", 1, &Robot::batteryCallback, this);
+
     _moveRobotService = n.advertiseService(
       getName() + "/replace", &Robot::moveRobotCallback, this);
 
@@ -94,6 +98,7 @@ namespace stdr_robot
 		_sensors.push_back( SensorPtr(
         new Battery( _map,
           result->description.batterySensors[batteryIter], getName(), n ) ) );
+		_batteryLevel += result->description.batterySensors[batteryIter].initial_capacity;
     }	
 	
     for ( unsigned int laserIter = 0;
@@ -194,6 +199,17 @@ namespace stdr_robot
   }
 
   /**
+  @brief Callback for getting the current battery level
+  @param msg [const int] The current battery level
+  @return void
+  **/
+  void Robot::batteryCallback(const stdr_msgs::BatterySensorMeasurement& msg)
+  {
+    _batteryLevel -= msg.consumption;
+	ROS_ERROR("Battery level is now: %d",_batteryLevel);
+  }
+
+  /**
   @brief The callback of the re-place robot service
   @param req [stdr_msgs::MoveRobot::Request&] The service request
   @param res [stdr_msgs::MoveRobot::Response&] The service result
@@ -207,7 +223,20 @@ namespace stdr_robot
     {
       return false;
     }
-    
+
+	float x1 = _currentPose.x;
+	float x2 = req.newPose.x;
+	float y1 = _currentPose.y;
+	float y2 = req.newPose.y;
+    float dist = sqrt( pow(x2 - x1, 2) + pow(y2 - y1, 2));
+    float batteryUsed = dist * ENERGY_NEEDED_PER_METER;
+
+	if(batteryUsed < _batteryLevel) {
+		ROS_ERROR("Not enough battery to move");	
+		return false;
+	}
+	_batteryLevel -= batteryUsed;
+
     _currentPose = req.newPose;
 
     _previousPose = _currentPose;

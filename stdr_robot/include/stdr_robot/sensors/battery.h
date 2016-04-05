@@ -25,6 +25,7 @@
 #include <stdr_robot/sensors/sensor_base.h>
 #include <stdr_robot/sensors/helper.h>
 #include <stdr_msgs/BatterySensorMsg.h>
+#include <stdr_msgs/BatterySensorMeasurement.h>
 
 /**
 @namespace stdr_robot
@@ -60,12 +61,6 @@ namespace stdr_robot {
       @return void
       **/ 
       virtual void updateSensorCallback();
-
-      /**
-  	  @brief Returns the battery's current level
-      @return battery level [int] 
-      **/ 
-      int getLevel(void);
       
 	  /**
       @brief Default destructor
@@ -77,9 +72,6 @@ namespace stdr_robot {
 
       //!< thermal sensor description
       stdr_msgs::BatterySensorMsg _description;
-	  
-	  //!< the current battery level
-	  int level;
   };
 
 

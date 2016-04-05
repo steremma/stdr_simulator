@@ -20,6 +20,7 @@
 ******************************************************************************/
 
 #include <stdr_robot/sensors/battery.h>
+#define BATTERY_CONSUMPTION 1
 
 namespace stdr_robot {
   
@@ -39,16 +40,9 @@ namespace stdr_robot {
     : Sensor(map, name, n, msg.pose, msg.frame_id, msg.frequency)
   {
     _description = msg;
-	level = msg.initial_capacity;
-  }
-  
-  /**
-  @brief Returns the battery's current level
-  @return battery level [int] 
-  **/ 
-  int Battery::getLevel(void)
-  {
-	return level;
+
+    _publisher = n.advertise<stdr_msgs::BatterySensorMeasurement>
+      ( "battery", 1 );
   }
 
   /**
@@ -66,10 +60,10 @@ namespace stdr_robot {
   **/ 
   void Battery::updateSensorCallback() 
   {
-	level--;
-	if(level == 0) {
-	  ROS_ERROR("Battery died, robot should be dead");	
-	}
-	ROS_ERROR("Battery level is now %d",level);
+	stdr_msgs::BatterySensorMeasurement measuredSourcesMsg;
+    measuredSourcesMsg.header.stamp = ros::Time::now();
+    measuredSourcesMsg.header.frame_id = _namespace + "_" + _description.frame_id;
+	measuredSourcesMsg.consumption = BATTERY_CONSUMPTION;
+	_publisher.publish( measuredSourcesMsg );
   }
 }  // namespace stdr_robot
