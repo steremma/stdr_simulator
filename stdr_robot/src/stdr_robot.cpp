@@ -206,7 +206,6 @@ namespace stdr_robot
   void Robot::batteryCallback(const stdr_msgs::BatterySensorMeasurement& msg)
   {
     _batteryLevel -= msg.consumption;
-	ROS_ERROR("Battery level is now: %d",_batteryLevel);
   }
 
   /**
@@ -224,14 +223,15 @@ namespace stdr_robot
       return false;
     }
 
-	float x1 = _currentPose.x;
+	float x1 = _previousPose.x;
 	float x2 = req.newPose.x;
-	float y1 = _currentPose.y;
+	float y1 = _previousPose.y;
 	float y2 = req.newPose.y;
     float dist = sqrt( pow(x2 - x1, 2) + pow(y2 - y1, 2));
     float batteryUsed = dist * ENERGY_NEEDED_PER_METER;
+	ROS_ERROR("BatteryUsed is %f",batteryUsed);
 
-	if(batteryUsed < _batteryLevel) {
+	if(batteryUsed > _batteryLevel) {
 		ROS_ERROR("Not enough battery to move");	
 		return false;
 	}
