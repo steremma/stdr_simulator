@@ -167,6 +167,7 @@ namespace stdr_gui{
                       *co2_sensors = new QTreeWidgetItem(),
                       *thermal_sensors = new QTreeWidgetItem(),
                       *sound_sensors = new QTreeWidgetItem(),
+					  *batteries = new QTreeWidgetItem(),
                       *kinematics = new QTreeWidgetItem();
 
       lasers->setText(0,"Lasers");
@@ -175,10 +176,39 @@ namespace stdr_gui{
       co2_sensors->setText(0,"CO2 sensors");
       thermal_sensors->setText(0,"Thermal sensors");
       sound_sensors->setText(0,"Sound sensors");
+	  batteries->setText(0,"Batteries");
       kinematics->setText(0,"Kinematic");
       kinematics->setText(1,
         QString(msg.robots[i].robot.kinematicModel.type.c_str()));
-      
+
+      for(unsigned int l = 0 ; l < msg.robots[i].robot.laserSensors.size() ; 
+          l++)
+	  {
+	    QTreeWidgetItem *lname;
+        lname=new QTreeWidgetItem();
+		lname->setText(0,
+          msg.robots[i].robot.batterySensors[l].frame_id.c_str());
+        lname->setIcon(2,visible_icon_on_);
+        lname->setToolTip(2,"Visibility status");
+        lname->setIcon(3,visible_icon_);
+        lname->setToolTip(3,"Visualize topic");
+
+		QTreeWidgetItem *initialCapacity = new QTreeWidgetItem();
+	    QTreeWidgetItem *lfreq = new QTreeWidgetItem();
+
+		lfreq->setText(0,"Frequency");
+        lfreq->setText(1,(QString().setNum(
+          msg.robots[i].robot.laserSensors[l].frequency) + QString(" Hz")));
+		initialCapacity->setText(0,"Initial Capacity");
+        initialCapacity->setText(1,QString().setNum(
+          msg.robots[i].robot.batterySensors[l].initial_capacity) + QString(" Wh "));
+		
+		lname->addChild(lfreq);
+        lname->addChild(initialCapacity);
+        
+        batteries->addChild(lname);
+	  }
+
       for(unsigned int l = 0 ; l < msg.robots[i].robot.laserSensors.size() ; 
           l++)
       {
@@ -575,6 +605,7 @@ namespace stdr_gui{
       rnode->addChild(co2_sensors);
       rnode->addChild(thermal_sensors);
       rnode->addChild(sound_sensors);
+	  rnode->addChild(batteries);
       rnode->addChild(kinematics);
       
       robotsInfo.addChild(rnode);
