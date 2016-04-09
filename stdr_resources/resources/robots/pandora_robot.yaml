@@ -11,6 +11,7 @@ robot:
         theta: 0
     - battery:
         battery_specifications:
+          initial_capacity: 20000
           frequency: 10
           frame_id: battery_0
           pose:
